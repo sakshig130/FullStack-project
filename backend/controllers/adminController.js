@@ -129,6 +129,7 @@ export const resetPassword = async (req, res) => {
       });
     }
 
+    // Check if admin exists
     const admin = await Admin.findOne({ email });
     if (!admin) {
       return res.status(404).json({
@@ -137,9 +138,12 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    // ✅ Assign plain password (pre-save will hash it)
-    admin.password = newPassword;
-    await admin.save();
+    // ✅ Hash new password manually
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // ✅ Update only the password (skip validation on other fields like name)
+    await Admin.updateOne({ email }, { $set: { password: hashedPassword } });
 
     res.json({
       success: true,
