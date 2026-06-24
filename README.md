@@ -1,4 +1,4 @@
-# FullStack Project
+# Lottery System
 <<<<<<< HEAD
 
 This is my full stack project.  
